@@ -1078,32 +1078,6 @@ compareScenarios <- function(mif, hist,
                          ylab='Trade|Goods [billion US$2005/yr]',scales="free_y",plot.priority=c("x_hist","x","x_proj"),facet.ncol=3)
   swfigure(sw,print,p,sw_option="height=9,width=8")
 
-  ## ---- FE intensity of GDP ----
-
-  swlatex(sw,"\\subsection{FE intensity of GDP}")
-
-  items<- c("FE|Transport (EJ/yr)",
-            "FE|Buildings (EJ/yr)",
-            "FE|Industry (EJ/yr)")
-  gdp <- mselect(data, variable="GDP|PPP (billion US$2005/yr)")
-  var <- data[,,intersect(items, getNames(data,dim=3))]/gdp*1e3 # EJ/bil.$ -> GJ/$ -> 1e3 MJ/$
-
-  p <- mipArea(var["GLO",,], scales="free_y")
-  p <- p + theme(legend.position="none") + ylab("FE int. of GDP (MJ/US$2005)")
-  swfigure(sw,print,p,sw_option="height=3.5,width=7")
-
-  p <- mipBarYearData(var["GLO",y_bar,])
-  p <- p + theme(legend.position="none") + ylab("FE int. of GDP (MJ/US$2005)")
-  swfigure(sw,print,p,sw_option="height=4.5,width=7")
-
-  p <- mipBarYearData(var[,y_bar,]["GLO",,,invert=TRUE]) + ylab("FE int. of GDP (MJ/US$2005)")
-  swfigure(sw,print,p,sw_option="height=9,width=8")
-
-  swlatex(sw,"\\onecolumn")
-  p <- mipArea(var["GLO",,,invert=TRUE],scales="free_y") + ylab("FE int. of GDP (MJ/US$2005)")
-  swfigure(sw,print,p,sw_option="height=8,width=16")
-  swlatex(sw,"\\twocolumn")
-
   ## ---- Kaya decomposition ----
 
   swlatex(sw,"\\subsection{Kaya-Decomposition}")
@@ -2041,6 +2015,92 @@ compareScenarios <- function(mif, hist,
     swfigure(sw,print,p,sw_option="height=9,width=8")
   }
 
+    ## ---- FE intensity of GDP ----
+
+  swlatex(sw,"\\subsection{FE Intensity of GDP}")
+
+  items<- c("FE|Transport (EJ/yr)",
+            "FE|Buildings (EJ/yr)",
+            "FE|Industry (EJ/yr)")
+  gdp <- mselect(data, variable="GDP|PPP (billion US$2005/yr)")
+  var <- data[,,intersect(items, getNames(data,dim=3))]/gdp*1e3 # EJ/bil.$ -> GJ/$ -> 1e3 MJ/$
+
+  p <- mipArea(var["GLO",,], scales="free_y")
+  p <- p + theme(legend.position="none") + ylab("FE int. of GDP (MJ/US$2005)")
+  swfigure(sw,print,p,sw_option="height=3.5,width=7")
+
+  p <- mipBarYearData(var["GLO",y_bar,])
+  p <- p + theme(legend.position="none") + ylab("FE int. of GDP (MJ/US$2005)")
+  swfigure(sw,print,p,sw_option="height=4.5,width=7")
+
+  p <- mipBarYearData(var[,y_bar,]["GLO",,,invert=TRUE]) + ylab("FE int. of GDP (MJ/US$2005)")
+  swfigure(sw,print,p,sw_option="height=9,width=8")
+
+  swlatex(sw,"\\onecolumn")
+  p <- mipArea(var["GLO",,,invert=TRUE],scales="free_y") + ylab("FE int. of GDP (MJ/US$2005)")
+  swfigure(sw,print,p,sw_option="height=8,width=16")
+
+  items  <- c("FE (EJ/yr)", items)
+  gdp_hist <- mselect(hist, variable="GDP|PPP (billion US$2005/yr)")
+  getNames(gdp_hist, dim=2) <- "IEA"
+  iea_hist <- mselect(hist, model="IEA")
+  histvar <- iea_hist[,,intersect(items, getNames(data,dim=3))]/gdp_hist*1e3 # EJ/bil.$ -> GJ/$ -> 1e3 MJ/$
+  var <- data[,,intersect(items, getNames(data,dim=3))]/gdp*1e3 # EJ/bil.$ -> GJ/$ -> 1e3 MJ/$
+
+  swlatex(sw,"\\subsubsection{FE intensity lineplot - Total FE Demand - Global}")
+
+  p <- mipLineHistorical(var[mainReg,,],
+                         x_hist=histvar[mainReg,,],
+                         ylab='FE intensity of GDP PPP  [MJ/US$2005]',
+                         scales="free_y",
+                         plot.priority=c("x_hist","x","x_proj"),
+                         facet.dim="variable",
+                         facet.ncol=4)
+  swfigure(sw,print,p,sw_option="height=8,width=16")
+
+  swlatex(sw,"\\subsubsection{FE intensity lineplot - Total FE Demand}")
+
+  p <- mipLineHistorical(var[mainReg,,,invert=TRUE][,,"FE (EJ/yr)"],
+                         x_hist=histvar[mainReg,,invert=TRUE][,,"FE (EJ/yr)"],
+                         ylab='FE intensity of GDP PPP  [MJ/US$2005]',
+                         scales="free_y",
+                         plot.priority=c("x_hist","x","x_proj"),
+                         facet.ncol=4)
+  swfigure(sw,print,p,sw_option="height=9,width=16")
+
+  swlatex(sw,"\\subsubsection{FE intensity lineplot - Industry}")
+
+  p <- mipLineHistorical(var[mainReg,,,invert=TRUE][,,"FE|Industry (EJ/yr)"],
+                         x_hist=histvar[mainReg,,invert=TRUE][,,"FE|Industry (EJ/yr)"],
+                         ylab='FE intensity of GDP PPP  [MJ/US$2005]',
+                         scales="free_y",
+                         plot.priority=c("x_hist","x","x_proj"),
+                         facet.ncol=4)
+  swfigure(sw,print,p,sw_option="height=9,width=16")
+
+  swlatex(sw,"\\subsubsection{FE intensity lineplot - Buildings}")
+
+  p <- mipLineHistorical(var[mainReg,,,invert=TRUE][,,"FE|Buildings (EJ/yr)"],
+                         x_hist=histvar[mainReg,,invert=TRUE][,,"FE|Buildings (EJ/yr)"],
+                         ylab='FE intensity of GDP PPP  [MJ/US$2005]',
+                         scales="free_y",
+                         plot.priority=c("x_hist","x","x_proj"),
+                         facet.ncol=4)
+  swfigure(sw,print,p,sw_option="height=9,width=16")
+
+  swlatex(sw,"\\subsubsection{FE intensity lineplot - Transport}")
+
+  p <- mipLineHistorical(var[mainReg,,,invert=TRUE][,,"FE|Transport (EJ/yr)"],
+                         x_hist=histvar[mainReg,,invert=TRUE][,,"FE|Transport (EJ/yr)"],
+                         ylab='FE intensity of GDP PPP  [MJ/US$2005]',
+                         scales="free_y",
+                         plot.priority=c("x_hist","x","x_proj"),
+                         facet.ncol=4)
+  swfigure(sw,print,p,sw_option="height=9,width=16")
+
+  swlatex(sw,"\\twocolumn")
+
+  
   ## ---- ++++ USEFUL ENERGY + ENERGY SERVICES ++++ ----
 
   swlatex(sw,"\\section{Useful Energy and Energy Services}")
